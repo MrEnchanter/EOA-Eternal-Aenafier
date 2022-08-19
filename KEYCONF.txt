@@ -1,0 +1,6 @@
+alias "InvasionMenu" "openmenu InvasionMenuThing"
+
+addkeysection "Invasion stuff" InvasionStuffSupreme
+addmenukey "Open invasion menu" InvasionMenu
+addmenukey "Spawn a cache of ammo" SpawnSomeAmmoBoy
+alias "SpawnSomeAmmoBoy" "use InvasionAmmoRegenerator"

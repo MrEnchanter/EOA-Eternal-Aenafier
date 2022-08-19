@@ -1,0 +1,276 @@
+/*actor MySpawner : RandomSpawner  //Drops a random mapspot.
+{
+	DropItem "ZombieMapSpot", 256, 10
+	//DropItem "WolfenMapSpot" nah because the freedoom version of this sucks
+	DropItem "ShotGuyMapSpot", 256, 10
+	DropItem "ImpMapSpot", 256, 10
+	DropItem "DemonMapSpot", 256, 10
+	DropItem "SpectreMapSpot", 256, 10
+	DropItem "ChainGuyMapSpot", 256, 10
+	DropItem "CacoMapSpot", 256, 10
+	DropItem "PainElementMapSpot", 256, 10
+    DropItem "ArachMapSpot", 256, 10
+	DropItem "RevenantMapSpot", 256, 10
+	DropItem "MancubMapSpot", 256, 10
+	DropItem "KnightMapSpot", 256, 10
+	DropItem "BaronMapSpot", 256, 10
+	DropItem "ArchMapSpot", 256, 2
+	DropItem "CyberMapSpot", 256, 1
+	DropItem "MastermindMapSpot", 256, 1
+}*/
+
+//Space testers
+//0. Mancubus
+//1. Arachnotron
+//2. Arch-vile and revenant
+//3. Baron and Knight
+//4. Spider Mastermind
+//5. Cyberdemon
+//6. Pinky
+//7. Zombies
+//8. Cacodemon
+//9. Minimum space (lost soul)
+
+actor InvMaxTics : Inventory {Inventory.MaxAmount 105} //three seconds max
+
+actor MySpawner
+{
+	+INVISIBLE
+	+INVULNERABLE
+	states
+	{
+	Spawn:
+		TNT1 A 0
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 9) == 0, "Death")
+		TNT1 A 0 A_JumpIfInventory("InvMaxTics", 105, 3) //Spawn a zombieman if have been 3 seconds deciding
+		TNT1 A 1 A_GiveInventory("InvMaxTics") //Should help avoid crashing due to far too many instructions in one tic
+		TNT1 A 0 A_Jump(172,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 7) == 0, 2)
+		TNT1 A 1 A_SpawnItem("ZombieMapSpot")
+		//TNT1 A 1 A_SpawnItem("FoggySmokeSpawner")
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(172,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 7) == 0, 2)
+		TNT1 A 1 A_SpawnItem("ShotguyMapSpot")
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(172,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 7) == 0, 2)
+		TNT1 A 1 A_SpawnItem("ImpMapSpot")
+		//TNT1 A 1 A_SpawnItem("FoggySmokeSpawner")
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(172,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 7) == 0, 2)
+		TNT1 A 1 A_SpawnItem("ChainguyMapSpot")
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics") //Another one just in case
+		TNT1 A 0 A_Jump(168,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 6) == 0, 2)
+		TNT1 A 1 A_SpawnItem("DemonMapSpot")
+		//TNT1 A 1 A_SpawnItem("FoggySmokeSpawner")
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(168,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 8) == 0, 2)
+		TNT1 A 1 A_SpawnItem("CacoMapSpot")
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(168,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 8) == 0, 2)
+		TNT1 A 1 A_SpawnItem("PainElementMapSpot")
+		//TNT1 A 1 A_SpawnItem("FoggySmokeSpawner")		
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(168,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 1) == 0, 2)
+		TNT1 A 1 A_SpawnItem("ArachMapSpot")
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(168,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 2) == 0, 2)
+		TNT1 A 1 A_SpawnItem("RevenantMapSpot")
+		//TNT1 A 1 A_SpawnItem("FoggySmokeSpawner")
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(168,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 0) == 0, 2)
+		TNT1 A 1 A_SpawnItem("MancubMapSpot")
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics") //Another one just in case
+		TNT1 A 0 A_Jump(168,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 3) == 0, 2)
+		TNT1 A 1 A_SpawnItem("KnightMapSpot")
+		//TNT1 A 1 A_SpawnItem("FoggySmokeSpawner")
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(96,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 3) == 0, 2)
+		TNT1 A 1 A_SpawnItem("BaronMapSpot")
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(56,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 2) == 0, 2)
+		TNT1 A 1 A_SpawnItem("ArchMapSpot")
+		//TNT1 A 1 A_SpawnItem("FoggySmokeSpawner")
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(96,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 5) == 0, 2)
+		TNT1 A 1 A_SpawnItem("CyberMapSpot")
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 4) == 0, "Spawn")
+		TNT1 A 1 A_SpawnItem("MastermindMapSpot")
+		//TNT1 A 1 A_SpawnItem("FoggySmokeSpawner")
+		Goto Death
+	Death:
+		TNT1 A 1
+		Stop
+	}
+}
+
+actor RanWeppin : RandomSpawner
+{
+	DropItem "InvasionRocketCombo", 256
+	DropItem "InvasionShotgunCombo", 256
+}
+
+actor InvasionRocketCombo
+{
+	+NOBLOCKMAP
+	states
+	{
+	Spawn:
+		TNT1 A 0 NoDelay A_SpawnItem("Chaingun")
+		TNT1 A 0 A_SpawnItem("RocketLauncher")
+		TNT1 A 0 A_SpawnItemEx("SmokeFog2",random(20,-20), random(20,-20), random(20,-20),0)
+		TNT1 A 0 A_SpawnItemEx("SmokeFog1",random(20,-20), random(20,-20), random(20,-20),0)
+		//TNT1 A 1 A_SpawnItem("FoggySmokeSpawner")
+		Goto Null
+	}
+}
+
+actor InvasionShotgunCombo
+{
+	+NOBLOCKMAP
+	states
+	{
+	Spawn:
+		TNT1 A 0 NoDelay A_SpawnItem("Shotgun")
+		TNT1 A 0 A_SpawnItem("SuperShotgun")
+		TNT1 A 0 A_SpawnItemEx("SmokeFog2",random(20,-20), random(20,-20), random(20,-20),0)
+		//TNT1 A 1 A_SpawnItem("FoggySmokeSpawner")
+		Goto Null
+	}
+}
+
+actor RanMonster
+{
+	+INVISIBLE
+	+INVULNERABLE
+	states
+	{
+	Spawn:
+		TNT1 A 0
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 9) == 0, "Death")
+		TNT1 A 0 A_JumpIfInventory("InvMaxTics", 105, 3) //Spawn a zombieman if have been 3 seconds deciding
+		TNT1 A 1 A_GiveInventory("InvMaxTics") //Should help avoid crashing due to far too many instructions in one tic
+		TNT1 A 0 A_Jump(172,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 7) == 0, 2)
+		TNT1 A 1 A_SpawnItemEx("ZombiemanSpawner", 0, 0, 0, 0, 0, 0, 0, 288, 0, 999)
+		//TNT1 A 1 A_SpawnItem("FoggySmokeSpawner")
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(172,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 7) == 0, 2)
+		TNT1 A 1 A_SpawnItemEx("ShotgunGuySpawner", 0, 0, 0, 0, 0, 0, 0, 288, 0, 999)
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(172,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 7) == 0, 2)
+		TNT1 A 1 A_SpawnItemEx("ImpSpawner", 0, 0, 0, 0, 0, 0, 0, 288, 0, 999)
+		//TNT1 A 1 A_SpawnItem("FoggySmokeSpawner")
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(172,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 7) == 0, 2)
+		TNT1 A 1 A_SpawnItemEx("ChaingunGuySpawner", 0, 0, 0, 0, 0, 0, 0, 288, 0, 999)
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics") //Another one just in case
+		TNT1 A 0 A_Jump(168,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 6) == 0, 2)
+		TNT1 A 1 A_SpawnItemEx("DemonSpawner", 0, 0, 0, 0, 0, 0, 0, 288, 0, 999)
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(168,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 8) == 0, 2)
+		TNT1 A 1 A_SpawnItemEx("CacoSpawner", 0, 0, 0, 0, 0, 0, 0, 288, 0, 999)
+		//TNT1 A 1 A_SpawnItem("FoggySmokeSpawner")
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(168,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 8) == 0, 2)
+		TNT1 A 1 A_SpawnItemEx("PainSpawner", 0, 0, 0, 0, 0, 0, 0, 288, 0, 999)
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(168,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 1) == 0, 2)
+		TNT1 A 1 A_SpawnItemEx("ArachnotronSpawner", 0, 0, 0, 0, 0, 0, 0, 288, 0, 999)
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(168,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 2) == 0, 2)
+		TNT1 A 1 A_SpawnItemEx("RevSpawner", 0, 0, 0, 0, 0, 0, 0, 288, 0, 999)
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(168,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 0) == 0, 2)
+		TNT1 A 1 A_SpawnItemEx("FatsoSpawner", 0, 0, 0, 0, 0, 0, 0, 288, 0, 999)
+		//TNT1 A 1 A_SpawnItem("FoggySmokeSpawner")
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics") //Another one just in case
+		TNT1 A 0 A_Jump(168,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 2) == 0, 2)
+		TNT1 A 1 A_SpawnItemEx("HellKnightSpawner", 0, 0, 0, 0, 0, 0, 0, 288, 0, 999)
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(96,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 3) == 0, 2)
+		TNT1 A 1 A_SpawnItemEx("BaronSpawner", 0, 0, 0, 0, 0, 0, 0, 288, 0, 999)
+		Goto Death
+		TNT1 A 0 A_JumpIf(CallACS("CheckBossMonsterCVAR") == 2, "Spawn")
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(56,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 0) == 0, 2)
+		TNT1 A 1 A_SpawnItemEx("ArchvileSpawner", 0, 0, 0, 0, 0, 0, 0, 288, 0, 999)
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_Jump(96,3)
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 2) == 0, 2)
+		TNT1 A 1 A_SpawnItemEx("CyberMapSpot", 0, 0, 0, 0, 0, 0, 0, 288, 0, 999)
+		//TNT1 A 1 A_SpawnItem("FoggySmokeSpawner")
+		Goto Death
+		TNT1 A 1 A_GiveInventory("InvMaxTics")
+		TNT1 A 0 A_JumpIf(ACS_NamedExecuteWithResult("CheckIfEnoughSpace", 4) == 0, "Spawn")
+		TNT1 A 1 A_SpawnItem("MastermindMapSpot")
+		Goto Death
+	Death:
+		TNT1 A 1
+		Stop
+	}
+}
+
+/*actor RanMonster : RandomSpawner
+{
+	DropItem "ZombieMan" 
+	DropItem "ShotgunGuy"
+	DropItem "DoomImp"
+	DropItem "Demon"
+	DropItem "Spectre"
+	DropItem "ChaingunGuy"
+	DropItem "BaronOfHell"
+	DropItem "HellKnight"
+	DropItem "Revenant"
+}*/

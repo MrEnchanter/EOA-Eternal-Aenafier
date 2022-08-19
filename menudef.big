@@ -1,0 +1,39 @@
+AddOptionMenu "OptionsMenu"
+{
+	Submenu "Big Doom", "BigDoomMenu"
+}
+
+OptionMenu "BigDoomMenu"
+{
+	Title "Big Doom"
+	StaticText "NOTE: Settings take effect at the start of a map."
+	StaticText ""
+	Slider "Map Scale", "bigDoom_scale", 0.25, 4.0, 0.05, 2
+	StaticText ""
+	Option "Use Separate XYZ Scale Factors", "bigDoom_useXYZ", "OnOff"
+	Slider "X Scale", "bigDoom_Xscale", 0.25, 4.0, 0.05, 2
+	Slider "Y Scale", "bigDoom_Yscale", 0.25, 4.0, 0.05, 2
+	Slider "Z Scale", "bigDoom_Zscale", 0.25, 4.0, 0.05, 2
+	StaticText ""
+	Option "Scale Side Textures", "bigDoom_sideTexScale", "OnOff"
+	StaticText "Scale wall textures to fit new map size."
+	StaticText ""
+	Option "Scale Plane Textures", "bigDoom_planeTexScale", "OnOff"
+	StaticText "Scale floor and ceiling textures to fit new map size."
+	StaticText ""
+	Option "Use Smart Texture Scaling", "bigDoom_smartTexScale", "OnOff"
+	StaticText "Attempts to keep texture scale near x1.0 to mitigate"
+	StaticText "the uncanny feeling that you are either very small or"
+	StaticText "very large."
+	StaticText ""
+	Option "Use Proportional Clamping", "bigDoom_proportionalClamp", "OnOff"
+	StaticText "Preserves the map's shape when any axis must be clamped"
+	StaticText "to keep the map within the limits of the engine."
+	StaticText ""
+	Option "Preserve Floor Heights", "bigDoom_preserveFloors", "OnOff"
+	StaticText "Limits Z-scaling to ceiling heights only."
+	StaticText ""
+	Slider "Randomness", "bigDoom_randomness", 0.0, 1.0, 0.1, 1
+	StaticText "Randomizes the scaling for each map."
+	StaticText ""
+}

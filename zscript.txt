@@ -1,0 +1,52 @@
+Class ArenaHookPoint : Hookpoint replaces EOA_LargeArmor
+{
+  default
+  {
+		Radius 70;
+		Height 67;
+		VSpeed 48;
+		Scale 0.75;
+		Monster;
+		+NODAMAGE
+		-PUFFONACTORS
+		-ALWAYSPUFF
+		+BLOODLESSIMPACT
+		+NOGRAVITY
+		+NOBLOCKMONST
+		+NOPAIN
+		+NOCLIP
+		+NOBLOOD
+		+NOTELEFRAG
+		+DONTSQUASH
+		+NORADIUSDMG
+		+DONTTHRUST
+		+NEVERTARGET
+		+ISMONSTER
+	}
+  States
+  {
+  Spawn:
+	HOOK A 1 Bright 
+	{bISMONSTER = True;}
+	Loop;
+  CoolDown:
+	HOOK B 65 Bright 
+	{bISMONSTER = False;}
+	GoTo Spawn;
+  }
+}
+Class ArenaHookPoint2 : ArenaHookPoint replaces EOA_MegaHealth 
+{
+  default
+  {
+		Radius 70;
+		Height 67;
+		VSpeed 28;
+		Scale 0.75;
+	}
+}
+
+Class Arena_FieldDrone : EOA_FieldDrone replaces EOA_RuneTrialStone {}
+
+Class Arena_QuadDamage : EOA_QuadDamage replaces EOA_BFG {}
+Class Arena_QuadDamage2 : Arena_QuadDamage replaces EOA_Allmap {}

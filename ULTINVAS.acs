@@ -1,0 +1,303 @@
+#library "ULTINVAS.acs"
+#include "zcommon.acs"
+
+//Script Definitions
+#define InitializeInvasion 900
+#define DWelcomeMsg 901
+#define BeginCountDown 902
+#define SpawnWave 903
+#define BeginGameLoop 904
+#define CheckForKills 905
+
+#define giveKamikazeSTR 999
+
+//Other Definitions
+#define Second 35
+
+//Globals
+int CurrentWaveNum = 1;
+int MaxWaveNum = 6;
+int wavesSpawned;
+bool monsLimit;
+
+str actortable[10] =
+{
+	"InvasionMancubusSpaceTester",
+	"InvasionArachnotronSpaceTester",
+	"InvasionArchVileSpaceTester",
+	"InvasionBruiserSpaceTester",
+	"InvasionMastermindSpaceTester",
+	"InvasionCyberDemonSpaceTester",
+	"InvasionPinkySpaceTester",
+	"InvasionZombieSpaceTester",
+	"InvasionCacoSpaceTester",
+	"InvasionMinSpaceTester"
+};
+			
+//Space testers
+//0. Mancubus
+//1. Arachnotron
+//2. Arch-vile and revenant
+//3. Baron and Knight
+//4. Spider Mastermind
+//5. Cyberdemon
+//6. Pinky
+//7. Zombies
+//8. Cacodemon
+//9. Minimum space (lost soul)
+
+//From ACSUtils by Korshun, DjSkaarj, Monsterovich, TechnoDoomed1.
+script "CheckIfEnoughSpace" (int classname)
+{
+	int tid = UniqueTID();
+	if(!Spawn(actortable[classname], GetActorX(0), GetActorY(0), GetActorZ(0), tid))
+	{
+		SetResultValue(0);
+	}
+	else
+	{
+		Thing_Remove(tid);
+		SetResultValue(1);
+	}
+}
+
+Script "FinalizeInvasion" (void)
+{
+	SetPlayerProperty(1,1,4);
+	SetPlayerProperty(1,2,5);
+	PrintBold(s:"You lost!");
+	delay(35*3);
+	SetPlayerProperty(1,0,4);
+	SetPlayerProperty(1,0,5);
+	Teleport_NewMap(GetLevelInfo (LEVELINFO_LEVELNUM), 0, 0);
+}
+
+//Initialize Invasion
+Script "InitializeInvasion" OPEN
+{
+	if (GameType () != GAME_TITLE_MAP)
+	{
+		monsLimit = GetCVAR("inv_limitspawns");
+		
+		SlaughterAll(0);
+		
+		ACS_NamedExecute("DWelcomeMsg", 0);
+		delay(3 * Second);
+		ACS_NamedExecute("BeginCountDown", 0);
+		delay(5 * Second);
+		ACS_NamedExecute("SpawnWave", 0);
+		delay(second);
+		ACS_NamedExecute("BeginGameLoop", 0);
+	}
+}
+
+Script "CheckItemSpawningCVAR" (void)
+{
+	if(GetCvar("inv_removeitems"))
+		SetResultValue(2);
+		
+	else if(GetCvar("inv_restock"))
+		SetResultValue(3);
+}
+
+Script "CheckBossMonsterCVAR" (void)
+{
+	if(GetCvar("inv_bossmonsters"))
+		SetResultValue(2);
+}
+
+Script "CheckFatMonsterCVAR" (void)
+{
+	SetResultValue(GetCvar("inv_nofatmonsters"));
+}
+
+Script "CheckWeaponMonsterCVAR" (void)
+{
+	if(GetCvar("inv_weaponmonster") == 1) 
+		SetResultValue(2);
+}
+
+Script "CheckSpawnLimitCVAR" (void) {SetResultValue(monsLimit);}
+
+Script "invasiongiveammospawner" ENTER
+{
+	GiveInventory("InvasionAmmoRegenerator", 9999);
+}
+
+Script "invasiongiveammo" ENTER
+{
+	if (GetCvar("inv_regensecondsdm") > 0)
+	{
+		GiveInventory("AnotherBackpackInCaseThatTheOtherBackpackIsReplaced", 1);
+		Delay(GetCvar("inv_regensecondsdm") * 35);
+		restart;
+	}
+}
+//Welcome Message
+script "DWelcomeMsg" (void)
+{
+	SetFont("BIGFONT");
+	str lumpname = StrParam(n: PRINTNAME_LEVELNAME);
+	HudMessageBold(s:lumpname; HUDMSG_PLAIN, 0, CR_RED, 0.5, 0.22, 3.0);
+	HudMessageBold(s:"Welcome to Supreme Invasion!"; HUDMSG_PLAIN, 0, CR_RED, 0.5, 0.3, 3.0);
+	SetFont("SMALLFONT");
+	HudMessageBold(s:"Original mod by AlysiumX & TDRR."; HUDMSG_PLAIN, 0, CR_RED, 0.5, 0.34, 3.0);
+	HudMessageBold(s:"Current version by Dr.Frank'N'Spriter."; HUDMSG_PLAIN, 0, CR_RED, 0.5, 0.4, 3.0);
+	AmbientSound("Annoucer/welcome", 127);
+}
+
+//Count Down.
+script "BeginCountDown" (void)
+{
+	SetFont("BIGFONT");
+	HudMessageBold(s:"Next wave begins in "; HUDMSG_PLAIN, 0, CR_RED, 0.5, 0.45, 5.0);
+	AmbientSound("Annoucer/newRound", 127);
+	delay(Second * 2);
+	HudMessageBold(s:"3"; HUDMSG_PLAIN, 0, CR_RED, 0.5, 0.5, 1.0);
+	AmbientSound("Annoucer/three", 127);
+	delay(Second);
+	HudMessageBold(s:"2"; HUDMSG_PLAIN, 0, CR_RED, 0.5, 0.5, 1.0);
+	AmbientSound("Annoucer/two", 127);
+	delay(Second);
+	HudMessageBold(s:"1"; HUDMSG_PLAIN, 0, CR_RED, 0.5, 0.5, 1.0);
+	AmbientSound("Annoucer/one", 127);
+	delay(Second);
+	HudMessageBold(s:"FIGHT!"; HUDMSG_PLAIN, 0, CR_GOLD, 0.5, 0.45, 1.0);
+	AmbientSound("Annoucer/fight", 127);
+}
+
+script "SpawnWave" (void)
+{	
+	if(!monsLimit)
+	{
+		for(int i = 0; i < currentWaveNum; i++)
+		{
+			SetActorState (666, "create", 1);
+			delay(8);
+		}
+	}
+	else
+	{
+		SetActorState (666, "create", 1);
+		wavesSpawned++;
+	}
+	
+	for(i = 0; i < 6; i++)
+	{
+		Delay(8);
+		Thing_Hate(999, 2018);
+		GiveActorInventory(999, "ThruSpeciesFlagSet", 1);
+		GiveActorInventory(999, "LookAllAroundFlagSet", 1);
+	}
+	
+	if(GetCVAR("inv_weaponspawn") == TRUE)
+		SetActorState(667, "Create", 1);
+}
+
+script "BeginGameLoop" (void)
+{
+	//While monsters are alive show counts.
+	while(thingCount(0, 999) > 0)
+	{
+		SetFont("SMALLFONT");
+		HudMessageBold(s:"WAVE"; HUDMSG_PLAIN, 0, CR_RED, 0.5, 0.05, 0.1);
+		SetFont("BIGFONT");
+		HudMessageBold(d:CurrentWaveNum; HUDMSG_PLAIN, 0, CR_RED, 0.5, 0.07, 0.1);
+		SetFont("SMALLFONT");
+		HudMessageBold(d:ThingCount(0, 999), s:" Monsters Left"; HUDMSG_PLAIN, 0, CR_RED, 0.5, 0.1, 0.1);
+		
+		delay(1);
+		
+		ACS_NamedExecute("CheckForKills", 0);
+	}
+	
+	if(monsLimit && (wavesSpawned < currentWaveNum))
+	{
+		ACS_NamedExecute("SpawnWave", 0);
+		
+		delay(4);
+		
+		while(ThingCount(0, 999) <= 0)
+		{
+			ACS_NamedTerminate("SpawnWave", 0); //if they didn't spawn, try again
+			ACS_NamedExecute("SpawnWave", 0);
+			delay(2);
+		}
+		
+		if(GetCVAR("inv_clearcorpses"))
+			giveactorinventory(999, "SpawnTheFireOnDeath", 4);
+		
+		restart;
+	}
+	
+	//Wave completed, start a new one
+	if(currentWaveNum < GetCvar("inv_numwaves"))
+	{
+		if(GetCVAR("inv_autosave"))
+			autosave();
+		
+		wavesSpawned = 0;
+			
+		HudMessageBold(s:"Wave Complete"; HUDMSG_PLAIN, 0, CR_RED, 0.5, 0.3, 1.0);
+		AmbientSound("Annoucer/wavecomplete", 127);
+		ACS_NamedTerminate("checkforkills", 0);
+		delay(2 * second);
+		giveactorinventory(999, "SpawnTheFireOnDeath", 4);
+		
+		currentWaveNum++;
+		
+		ACS_NamedExecute("BeginCountDown", 0);
+		delay(5 * Second);
+		ACS_NamedExecute("SpawnWave", 0);
+		delay(Second);
+		ACS_NamedExecuteAlways("BeginGameLoop", 0);
+	}
+	else //End of level
+	{
+		HudMessageBold(s:"Level Complete"; HUDMSG_PLAIN, 0, CR_RED, 0.5, 0.3, 1.0);
+		AmbientSound("Annoucer/levelcomplete", 127);
+		delay(2 * second);
+		Exit_Normal(0);
+	}
+}
+
+//slaughters all by TID (pointless function lol)
+function void SlaughterAll (int TID) {Thing_Destroy(TID, 1);}
+
+//This script check if monsters have stopped being killed.
+script "CheckForKills" (void)
+{
+	int curMonCount = thingcount(0, 999);
+	int secondstoend = GetCvar("inv_secondstokill") * 35;
+	
+	//check early to make sure we dont get stuck in a 30 second delay checking monsters.
+	delay(5 * second);
+  	if(!thingcount(0, 999) == curMonCount)
+		restart;
+		
+	if(thingcount(0, 999) > GetCvar("inv_monsterstokill")) {restart;}
+	else
+	{
+		delay(secondstoend);
+	
+		if (thingcount(0, 999) == curMonCount)
+		{	
+			printbold(s:"There has been a lack of killing.");
+			delay(5 * second);
+			printbold(s:"Slaughtering remaining monsters...");
+			delay(second);
+			SlaughterAll(999);
+			SlaughterAll(0);
+		}
+	}
+}
+
+Script "RemoveMonster" (void)
+{
+	int TID = UniqueTID();
+	
+	Thing_ChangeTID(0, TID);
+	delay(1);
+	SetActivator(0, AAPTR_NULL);
+	Thing_Remove(TID);
+}

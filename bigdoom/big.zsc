@@ -1,0 +1,243 @@
+class LevelScaler : LevelPostProcessor
+{
+	protected void Apply(Name checksum, String mapname)
+	{
+		bool keep_floor = CVar.FindCVar("bigDoom_preserveFloors").GetBool();
+		bool scalePlanes = CVar.FindCVar("bigDoom_planeTexScale").GetBool();
+		bool scaleSides = CVar.FindCVar("bigDoom_sideTexScale").GetBool();
+		bool smartTexScale = CVar.FindCVar("bigDoom_smartTexScale").GetBool();
+		bool unified_clamp = CVar.FindCVar("bigDoom_proportionalClamp").GetBool();
+		bool use_xyz = CVar.FindCVar("bigDoom_useXYZ").GetBool();
+		double randomness = CVar.FindCVar("bigDoom_randomness").GetFloat();
+		double factorX = CVar.FindCVar("bigDoom_Xscale").GetFloat();
+		double factorY = CVar.FindCVar("bigDoom_Yscale").GetFloat();
+		double factorZ = CVar.FindCVar("bigDoom_Zscale").GetFloat();
+		double factor = CVar.FindCVar("bigDoom_scale").GetFloat();
+		double texFactor = factor;
+		double texFactorX = factorX;
+		double texFactorY = factorY;
+		double texFactorZ = factorZ;
+		
+		double off_x = 0;
+		double off_y = 0;
+		
+		if (!use_xyz)
+		{
+			if (randomness)
+				texFactor = factor = factor ** frandom(1 - randomness, 1 + randomness);
+			factorX = factorY = factorZ = factor;
+			texFactorX = texFactorY = texFactorZ = texFactor;
+		}
+		else if (randomness)
+		{
+			texFactorX = factorX = factorX ** frandom(1 - randomness, 1 + randomness);
+			texFactorY = factorY = factorY ** frandom(1 - randomness, 1 + randomness);
+			texFactorZ = factorZ = factorZ ** frandom(1 - randomness, 1 + randomness);
+		}
+
+		for (int i = 0; i < Level.Vertexes.Size(); i++)
+		{
+			double x = Level.Vertexes[i].p.x;
+			double y = Level.Vertexes[i].p.y;
+			
+			// Clamp x to [-16383, 16382]
+			if (x * factorX < -16383)
+			{
+				double ratio = -16383 / (x * factorX);
+				factorX *= ratio;
+				if (unified_clamp)
+				{
+					factorY *= ratio;
+					factorZ *= ratio;
+				}
+			}
+			else if (x * factorX > 16382)
+			{
+				double ratio = 16382 / (x * factorX);
+				factorX *= ratio;
+				if (unified_clamp)
+				{
+					factorY *= ratio;
+					factorZ *= ratio;
+				}
+			}
+			
+			// Clamp y to [-16383, 16382]
+			if (y * factorY < -16383)
+			{
+				double ratio = -16383 / (y * factorY);
+				factorY *= ratio;
+				if (unified_clamp)
+				{
+					factorX *= ratio;
+					factorZ *= ratio;
+				}
+			}
+			else if (y * factorY > 16382)
+			{
+				double ratio = 16382 / (y * factorY);
+				factorY *= ratio;
+				if (unified_clamp)
+				{
+					factorX *= ratio;
+					factorZ *= ratio;
+				}
+			}
+		}
+		
+		for (int i = 0; i < Level.Sectors.Size(); i++)
+		{
+			Sector s = Level.Sectors[i];
+			double ceilz = s.ceilingplane.ZAtPoint((0,0));
+			double floorz = s.floorplane.ZAtPoint((0,0));
+			double height = ceilz - floorz;
+			
+			if (keep_floor)
+			{
+				double test = (height * factorZ) - height + ceilZ;
+				if (test > 16382)
+				{
+					factorZ *= 16382 / test;
+					if (unified_clamp)
+					{
+						factorX *= 16382 / test;
+						factorY *= 16382 / test;
+					}
+				}
+			}
+			else
+			{
+				if (ceilZ * factorZ < -16383)
+				{
+					double ratio = -16383 / (ceilZ * factorZ);
+					factorZ *= ratio;
+					if (unified_clamp)
+					{
+						factorX *= ratio;
+						factorY *= ratio;
+					}
+				}
+				else if (ceilZ * factorZ > 16382)
+				{
+					double ratio = 16382 / (ceilZ * factorZ);
+					factorZ *= ratio;
+					if (unified_clamp)
+					{
+						factorX *= ratio;
+						factorY *= ratio;
+					}
+				}
+				if (floorZ * factorZ < -16383)
+				{
+					double ratio = -16383 / (floorZ * factorZ);
+					factorZ *= ratio;
+					if (unified_clamp)
+					{
+						factorX *= ratio;
+						factorY *= ratio;
+					}
+				}
+				else if (floorZ * factorZ > 16382)
+				{
+					double ratio = 16382 / (floorZ * factorZ);
+					factorZ *= ratio;
+					if (unified_clamp)
+					{
+						factorX *= ratio;
+						factorY *= ratio;
+					}
+				}
+			}
+		}
+		
+		texFactorX = factorX;
+		texFactorY = factorY;
+		texFactorZ = factorZ;
+		
+		if (smartTexScale)
+		{
+			while (texFactor < 0.5)
+				texFactor *= 2;
+			while (texFactor > 2.0)
+				texFactor /= 2;
+			while (texFactorX < 0.5)
+				texFactorX *= 2;
+			while (texFactorX > 2.0)
+				texFactorX /= 2;
+			while (texFactorY < 0.5)
+				texFactorY *= 2;
+			while (texFactorY > 2.0)
+				texFactorY /= 2;
+			while (texFactorZ < 0.5)
+				texFactorZ *= 2;
+			while (texFactorZ > 2.0)
+				texFactorZ /= 2;
+		}
+		
+		for (int i = 0; i < Level.Vertexes.Size(); i++)
+		{
+			double x = Level.Vertexes[i].p.x;
+			double y = Level.Vertexes[i].p.y;
+
+			Vector2 newPos = (x * factorX, y * factorY);
+
+			setVertex(i, newPos.x, newPos.y);
+		}
+		
+		for (int i = 0; i < Level.Sectors.Size(); i++)
+		{
+			Sector s = Level.Sectors[i];
+			double ceilz = s.ceilingplane.ZAtPoint((0,0));
+			double floorz = s.floorplane.ZAtPoint((0,0));
+			double height = ceilz - floorz;
+			double hdest = (height * factorZ) - height;
+ 			double ceildest = ceilz * factorZ;
+ 			double floordest = floorz * factorZ;
+			
+			if (keep_floor)
+			{
+				OffsetSectorPlane(i, 1, (height * factorZ) - height);
+			}
+			else
+			{
+				OffsetSectorPlane(i, 0, floordest - floorz);
+				OffsetSectorPlane(i, 1, ceildest - ceilz);
+			}
+			
+			if (scalePlanes)
+			{
+				s.SetXScale(Sector.Floor, s.GetXScale(Sector.Floor) / texFactorX);
+				s.SetYScale(Sector.Floor, s.GetYScale(Sector.Floor) / texFactorY);
+				s.SetXScale(Sector.Ceiling, s.GetXScale(Sector.Ceiling) / texFactorX);
+				s.SetYScale(Sector.Ceiling, s.GetYScale(Sector.Ceiling) / texFactorY);
+			}
+		}
+		
+		for (int i = 0; i < Level.Sides.Size(); i++)
+		{
+			if (scaleSides)
+			{
+				Level.Sides[i].MultiplyTextureYScale(0, 1/texFactorZ);
+				Level.Sides[i].MultiplyTextureYScale(1, 1/texFactorZ);
+				Level.Sides[i].MultiplyTextureYScale(2, 1/texFactorZ);
+			}
+			else
+			{
+				Level.Sides[i].MultiplyTextureXScale(0, factorZ);
+				Level.Sides[i].MultiplyTextureXScale(1, factorZ);
+				Level.Sides[i].MultiplyTextureXScale(2, factorZ);
+			}
+		}
+		
+		for (int i = 0; i < GetThingCount(); i++)
+		{
+			Vector3 thingpos = GetThingPos(i);
+			double x = thingpos.x;
+			double y = thingpos.y;
+
+			Vector2 newPos = (x * factorX, y * factorY);
+
+			SetThingXY(i, newPos.x, newPos.y);
+		}
+	}
+}

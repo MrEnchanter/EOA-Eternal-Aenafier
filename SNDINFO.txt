@@ -1,0 +1,8 @@
+Annoucer/welcome WEL
+Annoucer/newRound BEGIN
+Annoucer/three THREE
+Annoucer/two TWO
+Annoucer/one ONE
+Annoucer/fight FIGHT
+Annoucer/wavecomplete WAVECOMP
+Annoucer/levelcomplete LVLCOMP

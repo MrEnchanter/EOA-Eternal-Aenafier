@@ -1,0 +1,39 @@
+#include Actors/RANDOMSPAWNERS.dec
+#include Actors/THRUACTORS.dec
+#include Actors/MAPSPOTS.dec
+#include "DECORATE/Ambience"
+
+ACTOR AnotherBackpackInCaseThatTheOtherBackpackIsReplaced : Backpack {}
+
+//This new actor is supposed to give you all types of ammo without increasing
+//the maximum ammo you can carry, this should fix one issue with "The Trooper"
+ACTOR INVASIONAmmoRegenerator : CustomInventory
+{
+	Inventory.Amount 8
+	Inventory.MaxAmount 9999
+	+INVENTORY.ALWAYSPICKUP
+	-INVBAR
+	states
+	{
+	Use:
+		TNT1 A 0
+		TNT1 A 0 A_SpawnItemEx("SmokeFog1",random(20,-20), random(20,-20), random(20,-20),0)
+		TNT1 A 0 A_SpawnItemEx("SmokeFog2",random(20,-20), random(20,-20), random(20,-20),0)
+		TNT1 A 0 A_SpawnItemEx("SmokeFog1",random(20,-20), random(20,-20), random(20,-20),0)
+		TNT1 A 0 A_SpawnItemEx("SmokeFog2",random(20,-20), random(20,-20), random(20,-20),0)
+		TNT1 A 1 A_GiveInventory("InvasionAmmoRegenerator", 9999)
+		Stop
+	}
+}
+
+//Available space tester for most monsters
+ACTOR InvasionMancubusSpaceTester : Fatso {}
+ACTOR InvasionArachnotronSpaceTester : Arachnotron {}
+ACTOR InvasionArchVileSpaceTester : Archvile {} //For the revenant too
+ACTOR InvasionBruiserSpaceTester : BaronOfHell {} //Both knight and baron
+ACTOR InvasionMastermindSpaceTester : SpiderMastermind {}
+ACTOR InvasionCyberDemonSpaceTester : Cyberdemon {}
+ACTOR InvasionPinkySpaceTester : Demon {}
+ACTOR InvasionZombieSpaceTester : ZombieMan {} //All former humans
+ACTOR InvasionCacoSpaceTester : Cacodemon {} //For the pain elemental too
+ACTOR InvasionMinSpaceTester : LostSoul {} //Min. space tester, if not enough space for a lost soul, don't waste time spawning anything

@@ -1,0 +1,12 @@
+server int inv_numwaves = 5;
+server int inv_regensecondsdm = 0;
+server int inv_secondstokill = 60;
+server int inv_monsterstokill = 50;
+server bool inv_removeitems = true;
+server bool inv_bossmonsters = true;
+server bool inv_nofatmonsters = false;
+server bool inv_restock = false;
+server bool inv_weaponmonster = true;
+server bool inv_limitspawns = true;
+server bool inv_autosave = true;
+server bool inv_clearcorpses = true;

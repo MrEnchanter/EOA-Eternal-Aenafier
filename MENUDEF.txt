@@ -1,0 +1,46 @@
+OptionMenu "InvasionMenuThing"
+{
+	Title "INVASION OPTIONS"
+	Slider "Number of waves", "inv_numwaves", 1.0, 15.0, 1.0, 0
+    StaticText " "
+	Option "Deathmatch Map Mode", "inv_weaponmonster", "OnOff"
+	StaticText "Makes monsters also spawn on weapons and ammo",1
+	StaticText "Same as loading SupremeInvasionDM.wad in old versions",1
+	StaticText " "
+	Option "Limit monster spawns", "inv_limitspawns", "OnOff"
+	StaticText "Instead of spawning all monsters from a wave",1
+	StaticText "at once, they're spawned in turns one by one",1
+	StaticText "Recommended for old computers and playing online!",1
+	StaticText ""
+	Option "Remove corpses fast (limit monster spawns only)", "inv_clearcorpses", "OnOff"
+	StaticText ""
+	Option "Remove map-placed items", "inv_removeitems", "OnOff"
+	StaticText " "
+	Option "Autosave before each wave", "inv_autosave", "OnOff"
+	StaticText " "
+	Option "Disable boss monsters", "inv_bossmonsters", "OnOff"
+	StaticText "Removes Pain Elemental, Cyberdemon, Spider mastermind",1
+	StaticText "and the arch-vile",1
+	StaticText " "
+	Option "Disable large monsters", "inv_nofatmonsters", "OnOff"
+	StaticText "Removes Arachnotron and Mancubus",1
+	StaticText " "
+	Option "Restock between waves", "inv_restock", "OnOff"
+	StaticText "Doesn't work if the Remove"
+	StaticText "map items option is enabled"
+	StaticText " "
+	Slider "Seconds to regen ammo", "inv_regensecondsdm", 0.0, 9000.0, 1.0, 0
+    StaticText "Set to 0 to never give ammo"
+	StaticText "Can cause problems with certain mods"
+	StaticText " "
+	Slider "Seconds to kill monsters", "inv_secondstokill", 5.0, 9000.0, 1.0, 0
+    //StaticText "set to 0 to never kill"
+	StaticText "I recommend you set this to 30"
+	StaticText " "
+	Slider "Monster kill threshold", "inv_monsterstokill", 0.0, 9000.0, 1.0, 0
+	StaticText "set to 0 to never kill"
+    StaticText "monsters won't be killed until"
+	StaticText "their count is below this value"
+	StaticText " "
+	Command "Set threshold to infinite",			"inv_monsterstokill 9999999"
+}

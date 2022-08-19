@@ -1,0 +1,11 @@
+server bool bigDoom_planeTexScale = true;
+server bool bigDoom_preserveFloors = false;
+server bool bigDoom_proportionalClamp = false;
+server bool bigDoom_sideTexScale = true;
+server bool bigDoom_smartTexScale = false;
+server bool bigDoom_useXYZ = false;
+server float bigDoom_Xscale = 2.0;
+server float bigDoom_Yscale = 2.0;
+server float bigDoom_Zscale = 2.0;
+server float bigDoom_randomness = 0.0;
+server float bigDoom_scale = 2.0;
